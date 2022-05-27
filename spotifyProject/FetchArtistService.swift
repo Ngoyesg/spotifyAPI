@@ -26,7 +26,7 @@ class FetchArstistWebRequest {
 extension FetchArstistWebRequest: FetchArstistWebRequestProtocol {
     
     func getArtist() {
-        <#code#>
+        //
     }
     
     

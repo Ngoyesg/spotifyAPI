@@ -9,7 +9,10 @@ import Foundation
 
 class RESTClient: WebClient {
     
-    func performRequest(endpoint: Endpoint, onSuccess: @escaping (Data?) -> Void, onError: @escaping (WebServiceError) -> Void) {
+    typealias TaskResponse = (data: Data?, response: URLResponse?, error: Error?)
+    private let invalidResponseStatusCodes = (200..<300)
+    
+    func performRequest(endpoint: Endpoint, onSuccess: @escaping onSuccess, onError: @escaping onError) {
         let urlSessionConfiguration = URLSessionConfiguration.default
         let urlSession = URLSession(configuration: urlSessionConfiguration)
         let url = URL(string: endpoint.url)!
@@ -26,15 +29,16 @@ class RESTClient: WebClient {
         task.resume()
     }
     
-    func process(taskResponse: (data: Data?, response: URLResponse?, error: Error?), onSuccess: @escaping (Data?) -> Void, onError: @escaping (WebServiceError) -> Void) {
+    func process(taskResponse: TaskResponse, onSuccess: @escaping onSuccess, onError: @escaping onError) {
         if taskResponse.error != nil {
             onError(WebServiceError.invalidRequest)
             return
         }
-        if let responseStatus = taskResponse.response as? HTTPURLResponse, !(200..<300).contains(responseStatus.statusCode) {
+        if let responseStatus = taskResponse.response as? HTTPURLResponse, !(invalidResponseStatusCodes).contains(responseStatus.statusCode) {
             onError(WebServiceError.invalidStatusCodeResponse)
             return
         }
         onSuccess(taskResponse.data)
     }
+    
 }

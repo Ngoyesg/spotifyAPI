@@ -22,5 +22,7 @@ enum WebServiceError: Error {
 }
 
 protocol WebClient {
-    func performRequest(endpoint: Endpoint, onSuccess: @escaping (Data?)-> Void, onError: @escaping (WebServiceError)-> Void)
+    typealias onSuccess = (Data?)-> Void
+    typealias onError = (WebServiceError)-> Void
+    func performRequest(endpoint: Endpoint, onSuccess: @escaping onSuccess, onError: @escaping onError)
 }
